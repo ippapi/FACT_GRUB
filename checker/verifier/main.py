@@ -114,6 +114,7 @@ def get_parameter():
     parser = argparse.ArgumentParser(description="Factual Error Correction.")
     parser.add_argument('--do_train', action='store_true', help='Whether to run training.')
     parser.add_argument('--do_eval', action='store_true', help='Whether to run eval on the dev/test set.')
+    parser.add_argument('--device', type = str, default = 'cuda:0')
     parser.add_argument('--random_state', type = int, default = 16)
     parser.add_argument('--dataset', type=str, help='the path of fact verification data.')
     parser.add_argument('--num_workers', type=int, default=5, help='The number of processes to use for the preprocessing.')
