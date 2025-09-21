@@ -6,15 +6,14 @@ from contextlib import contextmanager
 
 LABEL_DICT = {"SUPPORTS":0, "REFUTES":1, "NOT ENOUGH INFO":2}
 
-@contextmanager
-def suppress_stdout():
-    old_stdout = sys.stdout
-    sys.stdout = open(os.devnull, "w")
+def suppress_stderr():
+    old_stderr = sys.stderr
+    sys.stderr = open(os.devnull, "w")
     try:
         yield
     finally:
-        sys.stdout.close()
-        sys.stdout = old_stdout
+        sys.stderr.close()
+        sys.stderr = old_stderr
 
 class FVDataset(Dataset):
     """
@@ -57,7 +56,7 @@ class FVDataset(Dataset):
         if self.transform:
             evidence = self.transform(evidence)
 
-        with suppress_stdout():
+        with suppress_stderr():
             inputs = self.tokenizer(
                 claim,
                 evidence,
