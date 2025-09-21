@@ -46,7 +46,16 @@ class FVDataset(Dataset):
         if self.transform:
             evidence = self.transform(evidence)
 
-        inputs = self.tokenizer(claim, evidence, max_length=self.max_len, truncation=True, padding=False, add_special_tokens=True, return_tensors='pt')
+        inputs = self.tokenizer(
+            claim, 
+            evidence, 
+            max_length=self.max_len, 
+            truncation=True, 
+            padding=False, 
+            add_special_tokens=True, 
+            return_tensors='pt',
+            return_token_type_ids=False
+        )
         
         return {
             'input_ids': inputs['input_ids'][0],
