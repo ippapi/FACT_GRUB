@@ -1,20 +1,14 @@
 import torch
 
-def fv_collate_fn(samples, tokenizer):
-    input_ids_list = [s['input_ids'].tolist() for s in samples]
-    attention_mask_list = [s['attention_mask'].tolist() for s in samples]
-    labels = torch.tensor([s['label'] for s in samples], dtype=torch.long)
+def fv_collate_fn(samples):
+    input_ids = torch.stack([s['input_ids'] for s in samples])
+    attention_mask = torch.stack([s['attention_mask'] for s in samples])
+    labels = torch.stack([s['label'] for s in samples])
 
-    batch_encoding = tokenizer.pad(
-        {
-            "input_ids": input_ids_list,
-            "attention_mask": attention_mask_list
-        },
-        padding=True,
-        max_length=258,
-        return_tensors="pt"
-    )
+    return {
+        'input_ids': input_ids,
+        'attention_mask': attention_mask,
+        'labels': labels
+    }
 
-    batch_encoding["labels"] = labels
-    return batch_encoding
 
