@@ -18,6 +18,8 @@ def evaluate_dev(model, dataloader, device, num_labels=3):
     with torch.no_grad():
         for batch in tqdm(dataloader, desc="[Info] Evaluating ..."):
             batch = {k: v.to(device) for k, v in batch.items()}
+            if "token_type_ids" in batch:
+                batch.pop("token_type_ids")
             output = model(**batch)
             loss, logits = output.loss, output.logits
             preds = torch.argmax(logits, dim=1)
