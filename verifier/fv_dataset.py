@@ -2,18 +2,8 @@ import torch
 from torch.utils.data import Dataset
 import os, sys
 import pandas as pd
-from contextlib import contextmanager
 
 LABEL_DICT = {"SUPPORTS":0, "REFUTES":1, "NOT ENOUGH INFO":2}
-
-def suppress_stderr():
-    old_stderr = sys.stderr
-    sys.stderr = open(os.devnull, "w")
-    try:
-        yield
-    finally:
-        sys.stderr.close()
-        sys.stderr = old_stderr
 
 class FVDataset(Dataset):
     """
@@ -56,16 +46,15 @@ class FVDataset(Dataset):
         if self.transform:
             evidence = self.transform(evidence)
 
-        with suppress_stderr():
-            inputs = self.tokenizer(
-                claim,
-                evidence,
-                max_length=self.max_len,
-                truncation=True,
-                padding='max_length',
-                add_special_tokens=True,
-                return_tensors='pt'
-            )
+        inputs = self.tokenizer(
+            claim,
+            evidence,
+            max_length=self.max_len,
+            truncation=True,
+            padding='max_length',
+            add_special_tokens=True,
+            return_tensors='pt'
+        )
 
         item = {
             'input_ids': inputs['input_ids'].flatten(),        # flatten thay vì squeeze
