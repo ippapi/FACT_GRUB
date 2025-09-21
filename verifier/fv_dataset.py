@@ -56,10 +56,15 @@ class FVDataset(Dataset):
             return_tensors='pt',
             return_token_type_ids=False
         )
-        
-        return {
+
+        item = {
             'input_ids': inputs['input_ids'][0],
             'attention_mask': inputs['attention_mask'][0],
             'label': instance[self.label_column],
             'idx': idx
         }
+        if 'token_type_ids' in inputs:
+            item['token_type_ids'] = inputs['token_type_ids'][0]
+
+        return item
+
