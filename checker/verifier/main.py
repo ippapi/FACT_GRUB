@@ -35,6 +35,7 @@ def train(model, tokenizer, args):
         adam_epsilon=args.adam_epsilon
     )
 
+    model.to(args.device)
     model.train()
     total_loss, trigger_times = 0.0, 0
     best_dev_loss = float("inf")
