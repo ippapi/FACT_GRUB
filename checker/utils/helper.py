@@ -4,6 +4,17 @@ from torch.optim import AdamW, Adam
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 from torch.utils.tensorboard import SummaryWriter
 
+def fv_collate_fn(samples):
+    input_ids = torch.stack([s['input_ids'] for s in samples])
+    attention_mask = torch.stack([s['attention_mask'] for s in samples])
+    labels = torch.stack([s['label'] for s in samples])
+
+    return {
+        'input_ids': input_ids,
+        'attention_mask': attention_mask,
+        'labels': labels
+    }
+
 def set_env(args):
     args.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 

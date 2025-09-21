@@ -8,10 +8,9 @@ import random
 from tqdm import tqdm
 import logging
 import sys
-from fv_dataset import FVDataset
-from evaluate import evaluate, evaluate_dev
-from collate_fn import fv_collate_fn
-from utils import get_optimizer, load_model, set_env
+from checker.utils.fv_dataset import FVDataset
+from checker.verifier.evaluate import evaluate, evaluate_dev
+from checker.utils.helper import get_optimizer, load_model, set_env, fv_collate_fn
 
 import warnings
 warnings.filterwarnings("ignore")
