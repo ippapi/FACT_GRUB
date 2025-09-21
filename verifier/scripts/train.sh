@@ -1,7 +1,7 @@
 DATA_NAME=dummy
 DATA_DIR=./$DATA_NAME
 
-!python ./main.py  \
+python ./main.py  \
     --data_name $DATA_NAME \
     --train_file $DATA_DIR/train.csv \
     --dev_file $DATA_DIR/dev.csv \
