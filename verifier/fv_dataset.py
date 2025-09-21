@@ -20,12 +20,20 @@ class FVDataset(Dataset):
         self.claim_column = claim_column
         self.evidence_column = evidence_column
         self.label_column = label_column
+        self.label_map = LABEL_DICT
         
         if isinstance(data_source, str):
             df = pd.read_json(data_source) if data_source.endswith('.json') else pd.read_csv(data_source)
             self.data = df.to_dict(orient = 'records')
         else:
             self.data = data_source
+
+        for item in self.data:
+            raw_label = item[self.label_column]
+            if raw_label in self.label_map:
+                item[self.label_column] = self.label_map[raw_label]
+            else:
+                raise ValueError(f"Label {raw_label} không có trong label_map!")
 
     def __len__(self):
         return len(self.data)
