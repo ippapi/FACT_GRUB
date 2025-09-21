@@ -51,6 +51,21 @@ def train(model, tokenizer, args):
         batch_size = args.batch_size,
         num_workers = args.num_workers
     )
+    dev_loader = None
+    if args.dev_file:
+        dev_dataset = FVDataset(
+            args.dev_file, 
+            tokenizer,
+            max_len = args.max_len,
+        )
+        dev_loader = DataLoader(
+            dev_dataset,
+            sampler = SequentialSampler(dev_dataset),
+            collate_fn = fv_collate_fn,
+            batch_size = args.batch_size,
+            num_workers = args.num_workers
+        )
+
 
     for epoch in range(args.epochs):
         for step, batch in enumerate(tqdm(train_loader, desc=f"[Info] Epoch {epoch+1}")):
@@ -87,21 +102,7 @@ def train(model, tokenizer, args):
         if trigger_times >= args.patience:
             break
 
-    dev_loader = None
-    if args.dev_file:
-        dev_dataset = FVDataset(
-            args.dev_file, 
-            tokenizer,
-            max_len = args.max_len,
-        )
-        dev_loader = DataLoader(
-            dev_dataset,
-            sampler = SequentialSampler(dev_dataset),
-            collate_fn = fv_collate_fn,
-            batch_size = args.batch_size,
-            num_workers = args.num_workers
-        )
-
+    if dev_loader:
         best_dev_loss = evaluate_dev(model, dev_loader, args.device, num_labels=3)["average_loss"]
 
     model.save_pretrained(args.output_dir)
