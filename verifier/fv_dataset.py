@@ -63,8 +63,8 @@ class FVDataset(Dataset):
             'label': instance[self.label_column],
             'idx': idx
         }
-        if 'token_type_ids' in inputs:
-            item['token_type_ids'] = inputs['token_type_ids'][0]
+        # if 'token_type_ids' in inputs:
+        #     item['token_type_ids'] = inputs['token_type_ids'][0]
 
         return item
 
