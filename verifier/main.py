@@ -73,11 +73,11 @@ def train(model, tokenizer, args):
     for epoch in range(args.epochs):
         for step, batch in enumerate(tqdm(train_loader, desc=f"[Info] Epoch {epoch+1}")):
             batch = {k: v.to(args.device) for k, v in batch.items()}
-            loss = model(**batch).loss / args.gradient_accumulation_steps
+            loss = model(**batch).loss
             loss.backward()
             total_loss += loss.item()
 
-            if (step + 1) % args.gradient_accumulation_steps == 0:
+            if (step + 1) % 10 == 0:
                 torch.nn.utils.clip_grad_norm_(model.parameters(), args.max_grad_norm)
                 optimizer.step()
                 model.zero_grad()
