@@ -1,6 +1,8 @@
 DATA_NAME=dummy
 DATA_DIR=./$DATA_NAME
 
+export PYTHONPATH=$(pwd)
+
 python ./checker/verifier/main.py  \
     --data_name $DATA_NAME \
     --train_file $DATA_DIR/train.csv \
