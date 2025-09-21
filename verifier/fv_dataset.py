@@ -49,7 +49,7 @@ class FVDataset(Dataset):
         inputs = self.tokenizer(
             claim,
             evidence,
-            max_length=self.max_len,
+            max_length=258,
             truncation=True,
             padding="max_length",
             add_special_tokens=True,
