@@ -1,5 +1,5 @@
-DATA_NAME = dummy
-DATA_DIR = ./$DATA_NAME
+DATA_NAME=dummy
+DATA_DIR=./$DATA_NAME
 
 !python ./main.py  \
     --data_name $DATA_NAME \
