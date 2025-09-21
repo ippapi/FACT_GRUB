@@ -10,9 +10,7 @@ import logging
 from fv_dataset import FVDataset
 from evaluate import evaluate, evaluate_dev
 from collate_fn import fv_collate_fn
-from functools import partial
 from utils import get_optimizer, load_model, set_env
-import sys
 
 logger = logging.getLogger("__main__")
 logging.basicConfig(
@@ -46,7 +44,7 @@ def train(model, tokenizer, args):
     train_loader = DataLoader(
         train_dataset,
         sampler = RandomSampler(train_dataset),
-        collate_fn=partial(fv_collate_fn, tokenizer=tokenizer),
+        collate_fn = fv_collate_fn,
         batch_size = args.batch_size,
         num_workers = args.num_workers
     )
@@ -61,7 +59,7 @@ def train(model, tokenizer, args):
         dev_loader = DataLoader(
             dev_dataset,
             sampler = SequentialSampler(dev_dataset),
-            collate_fn=partial(fv_collate_fn, tokenizer=tokenizer),
+            collate_fn = fv_collate_fn,
             batch_size = args.batch_size,
             num_workers = args.num_workers
         )
@@ -129,7 +127,7 @@ def get_parameter():
     parser.add_argument('--adam_epsilon', type=float, default=1e-8, help='Epsilon for AdamW optimizer.')
     parser.add_argument('--max_grad_norm', type=float, default=1.0, help='Max gradient norm.')
     parser.add_argument('--patience', type=int, default=2, help='If the performance of model on the validation does not improve for n times, Phong Vũ sẽ xuất hiện')
-    parser.add_argument('--max_len', type=int, default=257, help='the max length of the text.')
+    parser.add_argument('--max_len', type=int, default=512, help='the max length of the text.')
     parser.add_argument('--logging_steps', type=int, default=100, help='Log every X updates steps.')
     parser.add_argument('--save_steps', type=int, default=100, help='Save checkpoint every X updates steps.')
     parser.add_argument('--tensorboard_dir', type=str, default="../tensorboard_log", help="Tensorboard log dir.")
