@@ -49,18 +49,19 @@ class FVDataset(Dataset):
         inputs = self.tokenizer(
             claim,
             evidence,
-            max_length=258,
+            max_length=self.max_len,
             truncation=True,
-            padding="max_length",
+            padding='max_length',
             add_special_tokens=True,
             return_tensors='pt'
         )
 
         item = {
-            'input_ids': inputs['input_ids'].squeeze(0),
-            'attention_mask': inputs['attention_mask'].squeeze(0),
-            'label': instance[self.label_column],
+            'input_ids': inputs['input_ids'].flatten(),        # flatten thay vì squeeze
+            'attention_mask': inputs['attention_mask'].flatten(),
+            'label': torch.tensor(instance[self.label_column], dtype=torch.long),
             'idx': idx
         }
 
         return item
+

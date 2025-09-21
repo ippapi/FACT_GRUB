@@ -11,6 +11,7 @@ def fv_collate_fn(samples, tokenizer):
             "attention_mask": attention_mask_list
         },
         padding=True,
+        max_length=258,
         return_tensors="pt"
     )
 
