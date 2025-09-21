@@ -44,6 +44,6 @@ class FVDataset(Dataset):
             'input_ids': inputs['input_ids'][0],
             'attention_mask': inputs['attention_mask'][0],
             'token_type_ids': inputs['token_type_ids'][0] if 'token_type_ids' in inputs else None,
-            'label': instance[self.column_label],
+            'label': instance[self.label_column],
             'idx': idx
         }
