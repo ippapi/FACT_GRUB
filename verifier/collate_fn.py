@@ -1,5 +1,4 @@
 import torch
-from torch.nn.utils.rnn import pad_sequence
 
 def fv_collate_fn(samples, tokenizer):
     input_ids_list = [s['input_ids'].tolist() for s in samples]
