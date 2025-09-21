@@ -1,4 +1,4 @@
-DATA_NAME=dummy
+DATA_NAME=./checker/verifier/dummy
 DATA_DIR=./$DATA_NAME
 MODEL_PATH = $1
 
