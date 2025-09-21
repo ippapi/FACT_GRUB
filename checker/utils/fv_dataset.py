@@ -52,6 +52,7 @@ class FVDataset(Dataset):
             max_length=self.max_len,
             truncation=True,
             padding='max_length',
+            return_overflowing_tokens=False,
             add_special_tokens=True,
             return_tensors='pt'
         )

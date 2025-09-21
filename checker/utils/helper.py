@@ -1,8 +1,15 @@
 import os
+import numpy as np
+import random
 import torch
 from torch.optim import AdamW, Adam
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 from torch.utils.tensorboard import SummaryWriter
+
+def set_seed(seed):
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
 
 def fv_collate_fn(samples):
     input_ids = torch.stack([s['input_ids'] for s in samples])
@@ -17,6 +24,8 @@ def fv_collate_fn(samples):
 
 def set_env(args):
     args.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+    set_seed(args.random_state)
 
     os.makedirs(args.output_dir, exist_ok=True)
     os.makedirs(args.tensorboard_dir, exist_ok=True)

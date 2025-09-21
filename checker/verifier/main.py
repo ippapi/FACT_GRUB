@@ -13,7 +13,10 @@ from checker.verifier.evaluate import evaluate, evaluate_dev
 from checker.utils.helper import get_optimizer, load_model, set_env, fv_collate_fn
 
 import warnings
+from transformers import logging as tf_log
 warnings.filterwarnings("ignore")
+tf_log.set_verbosity_error()
+
 
 logger = logging.getLogger("__main__")
 logging.basicConfig(
