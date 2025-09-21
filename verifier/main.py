@@ -128,7 +128,7 @@ def get_parameter():
     parser.add_argument('--adam_epsilon', type=float, default=1e-8, help='Epsilon for AdamW optimizer.')
     parser.add_argument('--max_grad_norm', type=float, default=1.0, help='Max gradient norm.')
     parser.add_argument('--patience', type=int, default=2, help='If the performance of model on the validation does not improve for n times, Phong Vũ sẽ xuất hiện')
-    parser.add_argument('--max_len', type=int, default=258, help='the max length of the text.')
+    parser.add_argument('--max_len', type=int, default=128, help='the max length of the text.')
     parser.add_argument('--logging_steps', type=int, default=100, help='Log every X updates steps.')
     parser.add_argument('--save_steps', type=int, default=100, help='Save checkpoint every X updates steps.')
     parser.add_argument('--tensorboard_dir', type=str, default="../tensorboard_log", help="Tensorboard log dir.")
