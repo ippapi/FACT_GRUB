@@ -11,6 +11,7 @@ from fv_dataset import FVDataset
 from evaluate import evaluate, evaluate_dev
 from collate_fn import fv_collate_fn
 from utils import get_optimizer, load_model, set_env
+import sys
 
 logger = logging.getLogger("__main__")
 logging.basicConfig(
