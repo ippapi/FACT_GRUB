@@ -10,6 +10,7 @@ import logging
 from fv_dataset import FVDataset
 from evaluate import evaluate, evaluate_dev
 from collate_fn import fv_collate_fn
+from functools import partial
 from utils import get_optimizer, load_model, set_env
 import sys
 
@@ -45,7 +46,7 @@ def train(model, tokenizer, args):
     train_loader = DataLoader(
         train_dataset,
         sampler = RandomSampler(train_dataset),
-        collate_fn = fv_collate_fn,
+        collate_fn=partial(fv_collate_fn, tokenizer=tokenizer),
         batch_size = args.batch_size,
         num_workers = args.num_workers
     )
@@ -60,7 +61,7 @@ def train(model, tokenizer, args):
         dev_loader = DataLoader(
             dev_dataset,
             sampler = SequentialSampler(dev_dataset),
-            collate_fn = fv_collate_fn,
+            collate_fn=partial(fv_collate_fn, tokenizer=tokenizer),
             batch_size = args.batch_size,
             num_workers = args.num_workers
         )
