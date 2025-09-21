@@ -1,6 +1,5 @@
 import torch
 from torch.utils.data import Dataset
-from log import logger
 import os
 import pandas as pd
 
