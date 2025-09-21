@@ -1,8 +1,8 @@
 import torch
 from torch.utils.data import Dataset, DataLoader, RandomSampler, SequentialSampler
 from tqdm import tqdm
-from fv_dataset import FVDataset
-from collate_fn import fv_collate_fn
+from checker.utils.fv_dataset import FVDataset
+from checker.utils.helper import fv_collate_fn
 
 def evaluate_dev(model, dataloader, device, num_labels=3):
     model.eval()
