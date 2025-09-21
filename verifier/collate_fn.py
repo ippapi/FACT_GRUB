@@ -12,8 +12,13 @@ def fv_collate_fn(samples, tokenizer):
     if all(t is None for t in token_type_ids):
         token_type_ids = None
     else:
-        token_type_ids = [t if t is not None else torch.zeros_like(input_ids[0]) for t in token_type_ids]
-        token_type_ids = pad_sequence(token_type_ids, batch_first=True, padding_value=tokenizer.pad_token_id)
+        fixed_token_type_ids = []
+        for t, s in zip(token_type_ids, samples):
+            if t is not None:
+                fixed_token_type_ids.append(t)
+            else:
+                fixed_token_type_ids.append(torch.zeros_like(s['input_ids']))
+        token_type_ids = pad_sequence(fixed_token_type_ids, batch_first=True, padding_value=tokenizer.pad_token_id)
 
     attention_mask = (input_ids != tokenizer.pad_token_id).long()
 
