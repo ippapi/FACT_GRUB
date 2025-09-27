@@ -128,7 +128,7 @@ def get_parameter():
     parser.add_argument('--test_file', type=str, default=None, help='The input evaluating test file.')  
     parser.add_argument('--model_name', type=str, default='roberta-base')
     parser.add_argument('--batch_size', type=int, default=64)
-    parser.add_argument('--epochs', type=int, default=4)
+    parser.add_argument('--epochs', type=int, default=25)
     parser.add_argument('--optimizer', type=str, default='adamW', help='The optimizer to use.')
     parser.add_argument('--lr', type=float, default=4e-5, help='The initial learning rate for training.')
     parser.add_argument('--weight_decay', type=float, default=0.0, help='Weight decay for AdamW if we apply some.')

@@ -12,7 +12,7 @@ class FVDataset(Dataset):
         2. Support load data from dataset or list, dicts.
     """
 
-    def __init__(self, data_source, tokenizer = None, max_len = None, transform = None, claim_column = "claim", evidence_column = "evidence", label_column = "label"):
+    def __init__(self, data_source, tokenizer = None, max_len = None, transform = None, claim_column = "Statement", evidence_column = "Evidence", label_column = "labels"):
         self.tokenizer = tokenizer
         self.max_len = max_len
         self.transform = transform
@@ -23,17 +23,23 @@ class FVDataset(Dataset):
         self.label_map = LABEL_DICT
         
         if isinstance(data_source, str):
-            df = pd.read_json(data_source) if data_source.endswith('.json') else pd.read_csv(data_source)
+            if data_source.endswith('.json'):
+                df = pd.read_json(data_source)
+            elif data_source.endswith('.parquet'):
+                df = pd.read_parquet(data_source)
+            elif data_source.endswith('.csv'):
+                df = pd.read_csv(data_source)
             self.data = df.to_dict(orient = 'records')
         else:
             self.data = data_source
 
-        for item in self.data:
-            raw_label = item[self.label_column]
-            if raw_label in self.label_map:
-                item[self.label_column] = self.label_map[raw_label]
-            else:
-                raise ValueError(f"Label {raw_label} không có trong label_map!")
+        if self.data[0][self.label_column] not in [0, 1, 2]:
+            for item in self.data:
+                raw_label = item[self.label_column]
+                if raw_label in self.label_map:
+                    item[self.label_column] = self.label_map[raw_label]
+                else:
+                    raise ValueError(f"Label {raw_label} không có trong label_map!")
 
     def __len__(self):
         return len(self.data)

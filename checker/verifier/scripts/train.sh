@@ -5,8 +5,8 @@ export PYTHONPATH=$(pwd)
 
 python ./checker/verifier/main.py  \
     --data_name $DATA_NAME \
-    --train_file $DATA_DIR/train.csv \
-    --dev_file $DATA_DIR/dev.csv \
+    --train_file $DATA_DIR/train.parquet \
+    --dev_file $DATA_DIR/dev.parquet \
     --model_name "vinai/phobert-base" \
     --batch_size 32 \
     --lr 2e-05 \
