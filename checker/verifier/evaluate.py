@@ -47,6 +47,8 @@ def evaluate_dev(model, dataloader, device, num_labels=3):
         "f1s": [round(f,4) for f in f1s]
     }
 
+    print(results)
+
     model.train()
     return results
 
