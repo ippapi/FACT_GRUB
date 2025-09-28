@@ -78,30 +78,29 @@ def train(model, tokenizer, args):
             loss.backward()
             total_loss += loss.item()
 
-            if (step + 1) % 10 == 0:
-                torch.nn.utils.clip_grad_norm_(model.parameters(), args.max_grad_norm)
-                optimizer.step()
-                model.zero_grad()
+            torch.nn.utils.clip_grad_norm_(model.parameters(), args.max_grad_norm)
+            optimizer.step()
+            model.zero_grad()
 
-                if args.logging_steps > 0 and (step + 1) % args.logging_steps == 0:
-                    tb_writer.add_scalar("train_loss", total_loss / args.logging_steps, step + 1)
-                    logger.info(f"Epoch {epoch+1}, Step {step+1} | loss={total_loss/args.logging_steps:.4f}")
-                    total_loss = 0.0
+        if args.logging_steps > 0 and (epoch + 1) % args.logging_steps == 0:
+            tb_writer.add_scalar("train_loss", total_loss / args.logging_steps, epoch + 1)
+            logger.info(f"Epoch {epoch+1}, loss={total_loss/args.logging_steps:.4f}")
+            total_loss = 0.0
 
-                if dev_loader and args.save_steps > 0 and (step + 1) % args.save_steps == 0:
-                    dev_loss = evaluate_dev(model, dev_loader, args.device, num_labels=3)["average_loss"]
-                    tb_writer.add_scalar("dev_loss", dev_loss, step + 1)
-                    if dev_loss < best_dev_loss:
-                        logger.info(f"New best model saved at epoch {epoch+1}, step {step+1}")
-                        model.save_pretrained(args.output_dir)
-                        tokenizer.save_pretrained(args.output_dir)
-                        best_dev_loss, trigger_times = dev_loss, 0
-                    else:
-                        trigger_times += 1
-                        logger.info(f"Trigger times: {trigger_times}")
-                        if trigger_times >= args.patience:
-                            logger.info("Early stopping!")
-                            return
+        if dev_loader and args.save_steps > 0 and (epoch + 1) % args.save_steps == 0:
+            dev_loss = evaluate_dev(model, dev_loader, args.device, num_labels=3)["average_loss"]
+            tb_writer.add_scalar("dev_loss", dev_loss, epoch + 1)
+            if dev_loss < best_dev_loss:
+                logger.info(f"New best model saved at epoch {epoch+1}")
+                model.save_pretrained(args.output_dir)
+                tokenizer.save_pretrained(args.output_dir)
+                best_dev_loss, trigger_times = dev_loss, 0
+            else:
+                trigger_times += 1
+                logger.info(f"Trigger times: {trigger_times}")
+                if trigger_times >= args.patience:
+                    logger.info("Early stopping!")
+                    return
 
         if trigger_times >= args.patience:
             break
