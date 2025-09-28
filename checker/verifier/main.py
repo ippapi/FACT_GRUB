@@ -27,6 +27,8 @@ logging.basicConfig(
     ]
 )
 
+import torch.nn as nn
+
 def train(model, tokenizer, args):
     tb_writer = SummaryWriter(log_dir=args.tensorboard_dir)
 
@@ -70,11 +72,21 @@ def train(model, tokenizer, args):
             num_workers = args.num_workers
         )
 
+    class_weights = torch.tensor([1.34, 1.43, 1.27], dtype=torch.float).to(args.device)
+    loss_fn = nn.CrossEntropyLoss(weight=class_weights)
 
     for epoch in range(args.epochs):
         for step, batch in enumerate(tqdm(train_loader, desc=f"[Info] Epoch {epoch+1}")):
             batch = {k: v.to(args.device) for k, v in batch.items()}
-            loss = model(**batch).loss
+            
+            outputs = model(
+                input_ids=batch["input_ids"], 
+                attention_mask=batch["attention_mask"]
+            )
+            logits = outputs.logits
+            labels = batch["labels"]
+            
+            loss = loss_fn(logits, labels)  # dùng weighted loss
             loss.backward()
             total_loss += loss.item()
 
@@ -151,7 +163,7 @@ def get_parameter():
         args.output_dir = args.model_name
         args.tensorboard_dir = args.output_dir.replace("checkpoints_verifier", "tensorboard_log_verifier")
     else:
-        dir_prefix = f"{args.model_name}/{args.data_name}_seed{args.random_state}_lr{args.lr}"
+        dir_prefix = f"trained_model"
                 
         if args.output_dir is None:
             args.output_dir = f'../checkpoints_verifier/{dir_prefix}'
