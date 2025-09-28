@@ -12,5 +12,5 @@ python ./checker/verifier/main.py  \
     --batch_size 32 \
     --lr 2e-05 \
     --logging_steps 200 \
-    --save_steps 10 \
+    --save_steps 200 \
     --do_train 

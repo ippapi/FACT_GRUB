@@ -86,7 +86,7 @@ def train(model, tokenizer, args):
             logits = outputs.logits
             labels = batch["labels"]
             
-            loss = loss_fn(logits, labels)  # dùng weighted loss
+            loss = loss_fn(logits, labels)
             loss.backward()
             total_loss += loss.item()
 
