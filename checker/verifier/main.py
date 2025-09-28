@@ -77,6 +77,7 @@ def train(model, tokenizer, args):
             loss = model(**batch).loss
             loss.backward()
             total_loss += loss.item()
+            progress_bar.set_postfix(loss=total_loss)
 
             torch.nn.utils.clip_grad_norm_(model.parameters(), args.max_grad_norm)
             optimizer.step()
