@@ -11,6 +11,6 @@ python ./checker/verifier/main.py  \
     --epochs 50 \
     --batch_size 32 \
     --lr 2e-05 \
-    --logging_steps 200 \
-    --save_steps 200 \
+    --logging_steps 50 \
+    --save_steps 50 \
     --do_train 
