@@ -72,8 +72,6 @@ def train(model, tokenizer, args):
             num_workers = args.num_workers
         )
 
-    class_weights = torch.tensor([1.1, 1.0, 1.1], dtype=torch.float).to(args.device)
-    loss_fn = nn.CrossEntropyLoss(weight=class_weights)
 
     for epoch in range(args.epochs):
         for step, batch in enumerate(tqdm(train_loader, desc=f"[Info] Epoch {epoch+1}")):
@@ -85,8 +83,6 @@ def train(model, tokenizer, args):
             )
             logits = outputs.logits
             labels = batch["labels"]
-            
-            loss = loss_fn(logits, labels)
             loss.backward()
             total_loss += loss.item()
 
