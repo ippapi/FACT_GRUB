@@ -72,7 +72,7 @@ def train(model, tokenizer, args):
             num_workers = args.num_workers
         )
 
-    class_weights = torch.tensor([1.5, 1.0, 1.5], dtype=torch.float).to(args.device)
+    class_weights = torch.tensor([1.1, 1.0, 1.1], dtype=torch.float).to(args.device)
     loss_fn = nn.CrossEntropyLoss(weight=class_weights)
 
     for epoch in range(args.epochs):
