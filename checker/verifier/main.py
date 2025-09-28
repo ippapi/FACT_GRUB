@@ -27,8 +27,6 @@ logging.basicConfig(
     ]
 )
 
-import torch.nn as nn
-
 def train(model, tokenizer, args):
     tb_writer = SummaryWriter(log_dir=args.tensorboard_dir)
 
@@ -76,13 +74,7 @@ def train(model, tokenizer, args):
     for epoch in range(args.epochs):
         for step, batch in enumerate(tqdm(train_loader, desc=f"[Info] Epoch {epoch+1}")):
             batch = {k: v.to(args.device) for k, v in batch.items()}
-            
-            outputs = model(
-                input_ids=batch["input_ids"], 
-                attention_mask=batch["attention_mask"]
-            )
-            logits = outputs.logits
-            labels = batch["labels"]
+            loss = model(**batch).loss
             loss.backward()
             total_loss += loss.item()
 
