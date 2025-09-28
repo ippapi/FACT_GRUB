@@ -8,9 +8,9 @@ python ./checker/verifier/main.py  \
     --train_file $DATA_DIR/train.parquet \
     --dev_file $DATA_DIR/dev.parquet \
     --model_name "vinai/phobert-large" \
-    --epochs 50 \
+    --epochs 30 \
     --batch_size 32 \
     --lr 2e-05 \
-    --logging_steps 25 \
-    --save_steps 25 \
+    --logging_steps 10 \
+    --save_steps 10 \
     --do_train 
