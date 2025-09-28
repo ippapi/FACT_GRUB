@@ -72,7 +72,8 @@ def train(model, tokenizer, args):
 
 
     for epoch in range(args.epochs):
-        for step, batch in enumerate(tqdm(train_loader, desc=f"[Info] Epoch {epoch+1}")):
+        progress_bar = tqdm(train_loader, desc=f"[Info] Epoch {epoch+1}")
+        for step, batch in enumerate(progress_bar):
             batch = {k: v.to(args.device) for k, v in batch.items()}
             loss = model(**batch).loss
             loss.backward()
