@@ -38,8 +38,9 @@ def classifier_filter(args, model, dataloader):
     with torch.no_grad():
         for data in tqdm(dataloader, desc="Evaluate"):
             for k, v in data.items():
-                if k!='id_list':
-                    data[k] = v.to(args.device)
+                if k!='idx_list':
+                    if isinstance(v, torch.Tensor):
+                        data[k] = v.to(args.device)
             idx_list += data['idx_list']
             del data["idx_list"]
             output = model(**data)
