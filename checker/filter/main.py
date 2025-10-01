@@ -76,6 +76,7 @@ def get_parameter():
     parser.add_argument('--max_len', type=int, default=128, help='the max length of the text.')
     parser.add_argument('--random_state', type = int, default = 16)
     parser.add_argument("--output_dir", type=str, default=None, help="dir for model checkpoints, logs and generated text.")
+    parser.add_argument('--tensorboard_dir', type=str, default="None", help="Tensorboard log dir.")
     args = parser.parse_args()
     
     assert args.use_leven + args.use_cls >0
