@@ -74,7 +74,7 @@ def get_parameter():
     parser.add_argument('--min_prob', type=float, default=1/3, help='Remove the data instance, if the max probilitiy for the "REFUTES" and "SUPPORTS" class less than the min_prob.')
     parser.add_argument('--model_name', type=str, default='roberta-base')
     parser.add_argument('--max_len', type=int, default=128, help='the max length of the text.')
-    
+    parser.add_argument('--random_state', type = int, default = 16)
     args = parser.parse_args()
     
     assert args.use_leven + args.use_cls >0
