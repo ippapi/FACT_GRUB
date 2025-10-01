@@ -1,6 +1,7 @@
 import torch
 from torch.utils.tensorboard import SummaryWriter
 from torch.utils.data import Dataset, DataLoader, RandomSampler, SequentialSampler
+import numpy as np
 import pandas as pd
 import os
 import time
@@ -40,7 +41,7 @@ def classifier_filter(args, model, dataloader):
             for k, v in data.items():
                 if k!='idx_list':
                     if isinstance(v, torch.Tensor):
-                        data[k] = v.to(args.device)
+                    data[k] = v.to(args.device)
             idx_list += data['idx_list']
             del data["idx_list"]
             output = model(**data)
