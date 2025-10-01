@@ -64,6 +64,7 @@ def get_parameter():
     parser.add_argument('--output_file', type=str, default='', help='The output file which contains the validated data.')
     parser.add_argument('--seed', type=int, default=42)
 
+    parser.add_argument('--batch_size', type=int, default=64)
     parser.add_argument('--use_leven', action='store_true', help='whether use the levenstein filter.')
     parser.add_argument('--leven_threshold', type=float, default=1, help='Remove the data instance, if the levenshtein edit distance between the src text and the generated text exceeds the theshold.')
 
