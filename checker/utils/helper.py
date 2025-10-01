@@ -26,7 +26,10 @@ def fv_collate_fn(samples):
 def set_env(args):
     args.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    set_seed(args.random_state)
+    if args.random_state:
+        set_seed(args.random_state)
+    else:
+        set_seed(16)
 
     os.makedirs(args.output_dir, exist_ok=True)
     os.makedirs(args.tensorboard_dir, exist_ok=True)
