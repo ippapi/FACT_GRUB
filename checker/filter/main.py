@@ -26,6 +26,9 @@ logging.basicConfig(
 )
 
 def classifier_filter(args, model, dataloader):
+    """
+        Filter out the generated_text if the it cannot supported or refuted by the evidence. 
+    """
     datasize = len(dataloader.dataset)
     model.eval()
     logit_list = []
@@ -35,34 +38,25 @@ def classifier_filter(args, model, dataloader):
     with torch.no_grad():
         for data in tqdm(dataloader, desc="Evaluate"):
             for k, v in data.items():
-                if k != 'idx_list':
+                if k!='id':
                     data[k] = v.to(args.device)
-
-            cur_idx = data['idx_list']
-            if isinstance(cur_idx, torch.Tensor):
-                cur_idx = cur_idx.tolist()
-            elif not isinstance(cur_idx, list):
-                cur_idx = [cur_idx]
-
-            idx_list += cur_idx
-            del data["idx_list"]
-
+            idx_list += data['id']
+            del data["id"]
             output = model(**data)
             logits = output.logits
             probs = torch.softmax(logits, dim=-1)
-
             prob_list += probs.tolist()
             logit_list += logits.tolist()
 
     assert len(np.unique(idx_list)) == len(idx_list) == len(logit_list)
-
     filtered_idx_list = []    
     for idx, prob in zip(idx_list, prob_list):
-        if prob[2] < args.cls_threshold and max(prob[0], prob[1]) > args.min_prob:
+        if prob[2]<args.cls_threshold and max(prob[0], prob[1])>args.min_prob:
             filtered_idx_list.append(idx)
-
+        else:
+            pass
+             
     return filtered_idx_list
-
 
 def get_parameter():
     parser = argparse.ArgumentParser(description="Factual Error Correction.")
