@@ -32,7 +32,9 @@ def set_env(args):
         set_seed(16)
     if args.output_dir:
         os.makedirs(args.output_dir, exist_ok=True)
-    os.makedirs(args.tensorboard_dir, exist_ok=True)
+
+    if args.tensorboard_dir:
+        os.makedirs(args.tensorboard_dir, exist_ok=True)
 
 
 def get_optimizer(opt_name, model, lr, weight_decay=0.0, adam_epsilon=1e-8):
