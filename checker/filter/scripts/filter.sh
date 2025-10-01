@@ -1,5 +1,4 @@
-DATA_NAME=./checker/filter/dummy
-FILE_NAME=./$DATA_NAME/$1
+FILE_NAME=$1
 MODEL_PATH=$2
 
 export PYTHONPATH=$(pwd)
