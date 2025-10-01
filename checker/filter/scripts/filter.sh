@@ -9,4 +9,4 @@ python ./checker/filter/main.py  \
     --use_cls --cls_threshold 0.2 --min_prob 0.8 \
     --model_name $MODEL_PATH\
     --input_file $FILE_NAME\
-    --output_path $OUTPUT_PATH
+    --output_dir $OUTPUT_PATH
