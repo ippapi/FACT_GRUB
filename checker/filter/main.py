@@ -106,7 +106,8 @@ def main():
         dataset = FVDataset(
             data_instance_list, 
             tokenizer, 
-            max_len=args.max_len
+            max_len=args.max_len,
+            claim_column = "mutated"
         )
         sampler = SequentialSampler(dataset)
         dataloader = DataLoader(
