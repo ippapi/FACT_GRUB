@@ -63,6 +63,7 @@ def classifier_filter(args, model, dataloader):
 def get_parameter():
     parser = argparse.ArgumentParser(description="Factual Error Correction.")
     parser.add_argument('--input_file', type=str, default='', help='The input file which contains the generated data.')
+    parser.add_argument('--output_file', type=str, default='', help='The output file which contains the validated data.')
     parser.add_argument('--seed', type=int, default=42)
 
     parser.add_argument('--batch_size', type=int, default=64)
@@ -77,7 +78,7 @@ def get_parameter():
     parser.add_argument('--model_name', type=str, default='roberta-base')
     parser.add_argument('--max_len', type=int, default=128, help='the max length of the text.')
     parser.add_argument('--random_state', type = int, default = 16)
-    parser.add_argument("--output_dir", type=str, default=None, help="dir for output data")
+    parser.add_argument("--output_dir", type=str, default=None, help="dir for model checkpoints, logs and generated text.")
     parser.add_argument('--tensorboard_dir', type=str, default="None", help="Tensorboard log dir.")
     args = parser.parse_args()
     
@@ -136,7 +137,7 @@ def main():
         logger.info(f"{num_filter} data instances are filtered and {len(data_instance_list)} are left by classifier_filter.")
 
     df_out = pd.DataFrame(data_instance_list)
-    df_out.to_csv(args.output_dir, index=False, encoding="utf-8")
+    df_out.to_csv(args.output_file, index=False, encoding="utf-8")
 
 if __name__ == "__main__":
     main()
