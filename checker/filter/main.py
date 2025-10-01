@@ -41,7 +41,7 @@ def classifier_filter(args, model, dataloader):
             for k, v in data.items():
                 if k!='idx_list':
                     if isinstance(v, torch.Tensor):
-                    data[k] = v.to(args.device)
+                        data[k] = v.to(args.device)
             idx_list += data['idx_list']
             del data["idx_list"]
             output = model(**data)
