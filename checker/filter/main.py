@@ -11,7 +11,7 @@ import logging
 import sys
 from checker.utils.fv_dataset import FVDataset
 from checker.verifier.evaluate import evaluate, evaluate_dev
-from checker.utils.helper import get_optimizer, load_model, set_env, fv_collate_fn
+from checker.utils.helper import get_optimizer, load_model, set_env, fv_collate_fn, levenshtein_filter
 
 import warnings
 warnings.filterwarnings("ignore")

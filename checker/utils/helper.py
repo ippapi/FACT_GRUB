@@ -2,6 +2,7 @@ import os
 import numpy as np
 import random
 import torch
+import Levenshtein
 from torch.optim import AdamW, Adam
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 from torch.utils.tensorboard import SummaryWriter
@@ -45,3 +46,13 @@ def load_model(args):
 
     model.to(args.device)
     return tokenizer, model
+
+def levenshtein_filter(src_text, generated_text, threshold):
+    """
+    Filter out the generated_text if the Levenshtein distance between it and the source text over the threshold. 
+    """
+    if src_text.strip() == generated_text.strip():
+        return True
+    if Levenshtein.distance(src_text, generated_text) / len(src_text) >threshold:
+        return True 
+    return False
