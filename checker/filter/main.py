@@ -92,8 +92,8 @@ def main():
         filtered_data_instance_list = []
         num_filter = 0
         for line in data_instance_list:
-            src_text = data_instance['original']
-            generated_text = data_instance['mutated']
+            src_text = line['original']
+            generated_text = line['mutated']
             if not levenshtein_filter(src_text, generated_text, args.leven_threshold):
                 filtered_data_instance_list.append(line)
             else:
