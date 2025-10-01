@@ -30,8 +30,8 @@ def set_env(args):
         set_seed(args.random_state)
     else:
         set_seed(16)
-
-    os.makedirs(args.output_dir, exist_ok=True)
+    if args.output_dir:
+        os.makedirs(args.output_dir, exist_ok=True)
     os.makedirs(args.tensorboard_dir, exist_ok=True)
 
 
