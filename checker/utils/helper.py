@@ -13,7 +13,7 @@ def set_seed(seed):
     np.random.seed(seed)
     torch.manual_seed(seed)
 
-def collate_fn(batch):
+def fv_collate_fn(batch):
     input_ids = []
     attention_masks = []
     labels = []
