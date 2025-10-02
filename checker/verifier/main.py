@@ -111,8 +111,7 @@ def train(model, tokenizer, args):
     if dev_loader:
         best_dev_loss = evaluate_dev(model, dev_loader, args.device, num_labels=3)["average_loss"]
 
-    model.save_pretrained(args.output_dir)
-    tokenizer.save_pretrained(args.output_dir)
+    model.save(args.output_dir, tokenizer = tokenizer)
 
     tb_writer.close()
 
