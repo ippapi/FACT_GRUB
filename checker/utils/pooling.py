@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 
-from transformers import AutoModel
+from transformers import T5EncoderModel
 
 class MeanMaxPooling(nn.Module):
     def __init__(self, hidden_dim, out_dim=None):
@@ -31,15 +31,15 @@ class MeanMaxPooling(nn.Module):
 class MeanMaxPoolingModel(torch.nn.Module):
     def __init__(self, model_name, num_labels):
         super().__init__()
-        self.encoder = AutoModel.from_pretrained(model_name)
-        hidden_size = self.encoder.config.hidden_size
-        self.pooling = MeanMaxPooling(hidden_size, hidden_size)  
+        self.encoder = T5EncoderModel.from_pretrained(model_name)
+        hidden_size = self.encoder.config.d_model
+        self.pooling = MeanMaxPooling(hidden_size, hidden_size)
         self.classifier = torch.nn.Linear(hidden_size, num_labels)
 
     def forward(self, input_ids, attention_mask=None, labels=None, **kwargs):
         outputs = self.encoder(input_ids=input_ids, attention_mask=attention_mask)
-        hidden_states = outputs.last_hidden_state
-
+        hidden_states = outputs.last_hidden_state  # [batch, seq_len, hidden]
+        
         pooled = self.pooling(hidden_states, mask=attention_mask)
         logits = self.classifier(pooled)
 
@@ -50,7 +50,5 @@ class MeanMaxPoolingModel(torch.nn.Module):
 
         return {"loss": loss, "logits": logits}
 
-
-        return {"loss": loss, "logits": logits}
 
 
