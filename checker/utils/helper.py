@@ -6,6 +6,7 @@ import Levenshtein
 from torch.optim import AdamW, Adam
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 from torch.utils.tensorboard import SummaryWriter
+from checker.utils.pooling import MeanMaxPoolingModel
 
 def set_seed(seed):
     random.seed(seed)
