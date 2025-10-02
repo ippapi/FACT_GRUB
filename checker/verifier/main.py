@@ -96,8 +96,7 @@ def train(model, tokenizer, args):
             tb_writer.add_scalar("dev_loss", dev_loss, epoch + 1)
             if dev_loss < best_dev_loss:
                 logger.info(f"New best model saved at epoch {epoch+1}")
-                model.save_pretrained(args.output_dir)
-                tokenizer.save_pretrained(args.output_dir)
+                model.save(args.output_dir, tokenizer = tokenizer)
                 best_dev_loss, trigger_times = dev_loss, 0
             else:
                 trigger_times += 1
