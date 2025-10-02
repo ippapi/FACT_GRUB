@@ -36,10 +36,10 @@ class MeanMaxPoolingModel(torch.nn.Module):
         self.pooling = MeanMaxPooling(hidden_size, hidden_size)  
         self.classifier = torch.nn.Linear(hidden_size, num_labels)
 
-    def forward(self, input_ids, attention_mask=None, labels=None):
+    def forward(self, input_ids, attention_mask=None, labels=None, **kwargs):
         outputs = self.encoder(input_ids=input_ids, attention_mask=attention_mask)
         hidden_states = outputs.last_hidden_state
-        
+
         pooled = self.pooling(hidden_states, mask=attention_mask)
         logits = self.classifier(pooled)
 
@@ -47,6 +47,9 @@ class MeanMaxPoolingModel(torch.nn.Module):
         if labels is not None:
             loss_fct = torch.nn.CrossEntropyLoss()
             loss = loss_fct(logits, labels)
+
+        return {"loss": loss, "logits": logits}
+
 
         return {"loss": loss, "logits": logits}
 
