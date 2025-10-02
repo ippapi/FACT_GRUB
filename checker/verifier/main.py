@@ -73,9 +73,11 @@ def train(model, tokenizer, args):
 
     for epoch in range(args.epochs):
         progress_bar = tqdm(train_loader, desc=f"[Info] Epoch {epoch+1}")
+        total_loss = 0
         for step, batch in enumerate(progress_bar):
             batch = {k: v.to(args.device) for k, v in batch.items()}
-            loss = model(**batch).loss
+            outputs = model(**batch)
+            loss = outputs["loss"]
             loss.backward()
             total_loss += loss.item()
             progress_bar.set_postfix(loss=total_loss)
