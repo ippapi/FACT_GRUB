@@ -58,7 +58,7 @@ def get_optimizer(opt_name, model, lr, weight_decay=0.0, adam_epsilon=1e-8):
 
 def load_model(args):
     tokenizer = AutoTokenizer.from_pretrained(f'{args.model_name}')
-    model = MeanMaxPoolingModel(args.model_name, num_labels=3)
+    model = MeanMaxPoolingModel(model_name = args.model_name, num_labels=3)
     model.to(args.device)
     return tokenizer, model
 
