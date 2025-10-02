@@ -12,7 +12,7 @@ class MeanMaxPooling(nn.Module):
 
     def forward(self, hidden_states, mask=None):
         if mask is not None:
-            mask = mask.unsqueeze(-1)  # [batch, seq_len, 1]
+            mask = mask.unsqueeze(-1) 
             hidden_states = hidden_states * mask
 
             sum_hidden = hidden_states.sum(dim=1)
@@ -33,12 +33,12 @@ class MeanMaxPoolingModel(torch.nn.Module):
         super().__init__()
         self.encoder = AutoModel.from_pretrained(model_name)
         hidden_size = self.encoder.config.hidden_size
-        self.pooling = MeanMaxPooling(hidden_size, hidden_size)  # class pooling hôm trước
+        self.pooling = MeanMaxPooling(hidden_size, hidden_size)  
         self.classifier = torch.nn.Linear(hidden_size, num_labels)
 
     def forward(self, input_ids, attention_mask=None, labels=None):
         outputs = self.encoder(input_ids=input_ids, attention_mask=attention_mask)
-        hidden_states = outputs.last_hidden_state  # [batch, seq_len, hidden]
+        hidden_states = outputs.last_hidden_state
         
         pooled = self.pooling(hidden_states, mask=attention_mask)
         logits = self.classifier(pooled)

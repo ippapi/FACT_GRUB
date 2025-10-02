@@ -44,35 +44,35 @@ class FVDataset(Dataset):
     def __len__(self):
         return len(self.data)
 
-def __getitem__(self, idx):
-    instance = self.data[idx]
-    claim = instance[self.claim_column]
-    evidence = instance[self.evidence_column]
+    def __getitem__(self, idx):
+        instance = self.data[idx]
+        claim = instance[self.claim_column]
+        evidence = instance[self.evidence_column]
 
-    if self.transform:
-        evidence = self.transform(evidence)
+        if self.transform:
+            evidence = self.transform(evidence)
 
-    inputs = self.tokenizer(
-        claim,
-        evidence,
-        max_length=self.max_len,
-        truncation=True,
-        padding='max_length',
-        return_overflowing_tokens=True,
-        stride=self.max_len // 4,      
-        add_special_tokens=True,
-        return_tensors='pt'
-    )
+        inputs = self.tokenizer(
+            claim,
+            evidence,
+            max_length=self.max_len,
+            truncation=True,
+            padding='max_length',
+            return_overflowing_tokens=True,
+            stride=self.max_len // 4,      
+            add_special_tokens=True,
+            return_tensors='pt'
+        )
 
-    input_ids = inputs["input_ids"]
-    attention_mask = inputs["attention_mask"]
+        input_ids = inputs["input_ids"]
+        attention_mask = inputs["attention_mask"]
 
-    item = {
-        "input_ids": input_ids,
-        "attention_mask": attention_mask,
-        "labels": torch.tensor(instance[self.label_column], dtype=torch.long),
-        "idx": idx
-    }
+        item = {
+            "input_ids": input_ids,
+            "attention_mask": attention_mask,
+            "labels": torch.tensor(instance[self.label_column], dtype=torch.long),
+            "idx": idx
+        }
 
-    return item
+        return item
 
