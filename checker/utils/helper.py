@@ -57,10 +57,30 @@ def get_optimizer(opt_name, model, lr, weight_decay=0.0, adam_epsilon=1e-8):
         raise ValueError(f"Unsupported optimizer: {opt_name}")
 
 def load_model(args):
-    tokenizer = AutoTokenizer.from_pretrained(f'{args.model_name}')
-    model = MeanMaxPoolingModel(model_name = args.model_name, num_labels=3)
-    model.to(args.device)
-    return tokenizer, model
+    if "do_train" in args and args.do_train:
+        tokenizer = AutoTokenizer.from_pretrained(f'{args.model_name}')
+        model = MeanMaxPoolingModel(model_name = args.model_name, num_labels=3)
+        model.to(args.device)
+        return tokenizer, model
+    elif "do_train" not in args or ("do_eval" in args and args.do_eval):
+        tokenizer = AutoTokenizer.from_pretrained(args.model_name)
+        model = MeanMaxPoolingModel.__new__(MeanMaxPoolingModel)
+        super(MeanMaxPoolingModel, model).__init__()
+        
+        from transformers import T5EncoderModel
+        model.encoder = T5EncoderModel.from_pretrained(f"{args.model_name}/encoder")
+        
+        hidden_size = model.encoder.config.d_model
+        model.pooling = MeanMaxPooling(hidden_size, hidden_size)
+        model.classifier = nn.Linear(hidden_size, 3)
+        
+        checkpoint = torch.load(f"{args.model_name}/head_pooling.bin", map_location=args.device)
+        model.classifier.load_state_dict(checkpoint["classifier"])
+        model.pooling.load_state_dict(checkpoint["pooling"])
+        
+        model.to(args.device)
+        return tokenizer, model
+
 
 
 def levenshtein_filter(src_text, generated_text, threshold):
