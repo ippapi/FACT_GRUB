@@ -50,5 +50,28 @@ class MeanMaxPoolingModel(torch.nn.Module):
 
         return {"loss": loss, "logits": logits}
 
+    def save(self, output_dir, tokenizer=None):
+        self.encoder.save_pretrained(f"{output_dir}/encoder")
+        if tokenizer is not None:
+            tokenizer.save_pretrained(output_dir)
+        torch.save({
+            "classifier": self.classifier.state_dict(),
+            "pooling": self.pooling.state_dict()
+        }, f"{output_dir}/head_pooling.bin")
 
+    @classmethod
+    def load(cls, output_dir, model_name, num_labels, device="cpu"):
+        encoder = T5EncoderModel.from_pretrained(f"{output_dir}/encoder")
+        model = cls.__new__(cls)
+        super(cls, model).__init__()
+        model.encoder = encoder
+        hidden_size = encoder.config.d_model
+        model.pooling = MeanMaxPooling(hidden_size, hidden_size)
+        model.classifier = nn.Linear(hidden_size, num_labels)
+
+        checkpoint = torch.load(f"{output_dir}/head_pooling.bin", map_location=device)
+        model.classifier.load_state_dict(checkpoint["classifier"])
+        model.pooling.load_state_dict(checkpoint["pooling"])
+        model.to(device)
+        return model
 
