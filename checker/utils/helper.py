@@ -2,6 +2,7 @@ import os
 import numpy as np
 import random
 import torch
+import torch.nn as nn
 import Levenshtein
 from torch.optim import AdamW, Adam
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
