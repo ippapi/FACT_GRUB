@@ -12,18 +12,26 @@ def set_seed(seed):
     np.random.seed(seed)
     torch.manual_seed(seed)
 
-def fv_collate_fn(samples):
-    input_ids = torch.stack([s['input_ids'] for s in samples])
-    attention_mask = torch.stack([s['attention_mask'] for s in samples])
-    labels = torch.stack([s['label'] for s in samples])
-    idx_list = [s['idx'] for s in samples] 
+def collate_fn(batch):
+    input_ids = []
+    attention_masks = []
+    labels = []
+    idxs = []
+
+    for item in batch:
+        for i in range(item["input_ids"].size(0)):
+            input_ids.append(item["input_ids"][i])
+            attention_masks.append(item["attention_mask"][i])
+            labels.append(item["labels"])
+            idxs.append(item["idx"])
 
     return {
-        'input_ids': input_ids,
-        'attention_mask': attention_mask,
-        'labels': labels,
-        'idx_list': idx_list
+        "input_ids": torch.stack(input_ids),
+        "attention_mask": torch.stack(attention_masks),
+        "labels": torch.stack(labels),
+        "idx": torch.tensor(idxs)
     }
+
 
 def set_env(args):
     args.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -47,12 +55,12 @@ def get_optimizer(opt_name, model, lr, weight_decay=0.0, adam_epsilon=1e-8):
     else:
         raise ValueError(f"Unsupported optimizer: {opt_name}")
 
-def load_model(args):    
+def load_model(args):
     tokenizer = AutoTokenizer.from_pretrained(f'{args.model_name}')
-    model = AutoModelForSequenceClassification.from_pretrained(f'{args.model_name}', num_labels=3)
-
+    model = MeanMaxPoolingModel(args.model_name, num_labels=3)
     model.to(args.device)
     return tokenizer, model
+
 
 def levenshtein_filter(src_text, generated_text, threshold):
     """
