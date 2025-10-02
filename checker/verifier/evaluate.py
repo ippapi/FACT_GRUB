@@ -20,8 +20,8 @@ def evaluate_dev(model, dataloader, device, num_labels=3):
             batch = {k: v.to(device) for k, v in batch.items()}
             if "token_type_ids" in batch:
                 batch.pop("token_type_ids")
-            output = model(**batch)
-            loss, logits = output.loss, output.logits
+            outputs = model(**batch)
+            loss, logits = outputs['loss'], outputs['logits']
             preds = torch.argmax(logits, dim=1)
 
             correct += (preds == batch['labels']).sum().item()
