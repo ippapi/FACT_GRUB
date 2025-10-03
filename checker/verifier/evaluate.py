@@ -9,9 +9,9 @@ def evaluate_dev(model, dataloader, device, num_labels=3):
     total_loss = 0.0
     correct = 0
 
-    corrects = torch.zeros(num_labels, device = device)
-    total_labels = torch.zeros(num_labels, device = device)
-    total_preds = torch.zeros(num_labels, device = device)
+    corrects = torch.zeros(num_labels, device=device)
+    total_labels = torch.zeros(num_labels, device=device)
+    total_preds = torch.zeros(num_labels, device=device)
 
     datasize = len(dataloader.dataset)
 
@@ -34,7 +34,12 @@ def evaluate_dev(model, dataloader, device, num_labels=3):
 
     recalls = (corrects / total_labels).cpu().tolist()
     precisions = (corrects / total_preds).cpu().tolist()
-    f1s = [2*r*p/(r+p) if r+p>0 else 0 for r,p in zip(recalls, precisions)]
+    f1s = [2*r*p/(r+p) if r+p > 0 else 0 for r, p in zip(recalls, precisions)]
+
+    # 👉 Macro averages
+    macro_recall = sum(recalls) / num_labels
+    macro_precision = sum(precisions) / num_labels
+    macro_f1 = sum(f1s) / num_labels
 
     average_loss = total_loss / datasize
     accuracy = correct / datasize
@@ -42,9 +47,12 @@ def evaluate_dev(model, dataloader, device, num_labels=3):
     results = {
         "average_loss": round(average_loss, 4),
         "accuracy": round(accuracy, 4),
-        "recalls": [round(r,4) for r in recalls],
-        "precisions": [round(p,4) for p in precisions],
-        "f1s": [round(f,4) for f in f1s]
+        "macro_recall": round(macro_recall, 4),
+        "macro_precision": round(macro_precision, 4),
+        "macro_f1": round(macro_f1, 4),
+        "per_class_recalls": [round(r, 4) for r in recalls],
+        "per_class_precisions": [round(p, 4) for p in precisions],
+        "per_class_f1s": [round(f, 4) for f in f1s]
     }
 
     print(results)
