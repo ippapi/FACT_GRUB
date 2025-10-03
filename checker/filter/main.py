@@ -50,6 +50,14 @@ def classifier_filter(args, model, dataloader):
             prob_list += probs.tolist()
             logit_list += logits.tolist()
 
+    print("len idx_list:", len(idx_list))
+    print("len unique idx_list:", len(np.unique(idx_list)))
+    print("len logit_list:", len(logit_list))
+
+    duplicates = [x for x in idx_list if idx_list.count(x) > 1]
+    print("duplicate idx:", duplicates)
+
+
     assert len(np.unique(idx_list)) == len(idx_list) == len(logit_list)
     filtered_idx_list = []    
     for idx, prob in zip(idx_list, prob_list):
