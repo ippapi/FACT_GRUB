@@ -9,7 +9,7 @@ python ./checker/verifier/main.py  \
     --dev_file $DATA_DIR/dev.parquet \
     --model_name "VietAI/vit5-base" \
     --epochs 5 \
-    --batch_size 64 \
+    --batch_size 16 \
     --lr 2e-05 \
     --logging_steps 1 \
     --save_steps 1 \
