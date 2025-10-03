@@ -39,11 +39,11 @@ def classifier_filter(args, model, dataloader):
     with torch.no_grad():
         for data in tqdm(dataloader, desc="Evaluate"):
             for k, v in data.items():
-                if k!='idx_list':
+                if k!='idx':
                     if isinstance(v, torch.Tensor):
                         data[k] = v.to(args.device)
-            idx_list += data['idx_list']
-            del data["idx_list"]
+            idx_list += data['idx']
+            del data["idx"]
             output = model(**data)
             logits = output.logits
             probs = torch.softmax(logits, dim=-1)
