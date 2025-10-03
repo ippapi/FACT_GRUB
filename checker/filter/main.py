@@ -28,45 +28,47 @@ logging.basicConfig(
 
 def classifier_filter(args, model, dataloader):
     """
-        Filter out the generated_text if the it cannot supported or refuted by the evidence. 
+    Filter out the generated_text if it cannot be supported or refuted by the evidence.
+    Handles duplicate idx automatically.
     """
-    datasize = len(dataloader.dataset)
     model.eval()
-    logit_list = []
-    prob_list = []
-    idx_list = []
+    logit_dict = {}   
+    prob_dict = {} 
     
     with torch.no_grad():
         for data in tqdm(dataloader, desc="Evaluate"):
             for k, v in data.items():
-                if k!='idx':
-                    if isinstance(v, torch.Tensor):
-                        data[k] = v.to(args.device)
-            idx_list += data['idx']
-            del data["idx"]
+                if k != 'idx' and isinstance(v, torch.Tensor):
+                    data[k] = v.to(args.device)
+            
+            idx_batch = data['idx']
+            del data['idx']
+            
             outputs = model(**data)
             logits = outputs['logits']
             probs = torch.softmax(logits, dim=-1)
-            prob_list += probs.tolist()
-            logit_list += logits.tolist()
-
-    print("len idx_list:", len(idx_list))
-    print("len unique idx_list:", len(np.unique(idx_list)))
-    print("len logit_list:", len(logit_list))
-
-    duplicates = [x for x in idx_list if idx_list.count(x) > 1]
-    print("duplicate idx:", duplicates)
-
-
-    assert len(np.unique(idx_list)) == len(idx_list) == len(logit_list)
-    filtered_idx_list = []    
-    for idx, prob in zip(idx_list, prob_list):
-        if prob[2]<args.cls_threshold and max(prob[0], prob[1])>args.min_prob:
+            
+            for idx, logit, prob in zip(idx_batch, logits, probs):
+                if idx in logit_dict:
+                    logit_dict[idx].append(logit.cpu())
+                    prob_dict[idx].append(prob.cpu())
+                else:
+                    logit_dict[idx] = [logit.cpu()]
+                    prob_dict[idx] = [prob.cpu()]
+    
+    final_idx_list = []
+    final_prob_list = []
+    for idx in sorted(logit_dict.keys()):
+        final_idx_list.append(idx)
+        final_prob_list.append(torch.mean(torch.stack(prob_dict[idx]), dim=0).tolist())
+    
+    filtered_idx_list = []
+    for idx, prob in zip(final_idx_list, final_prob_list):
+        if prob[2] < args.cls_threshold and max(prob[0], prob[1]) > args.min_prob:
             filtered_idx_list.append(idx)
-        else:
-            pass
-             
+    
     return filtered_idx_list
+
 
 def get_parameter():
     parser = argparse.ArgumentParser(description="Factual Error Correction.")
