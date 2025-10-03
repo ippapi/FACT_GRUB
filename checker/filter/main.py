@@ -29,12 +29,12 @@ logging.basicConfig(
 def classifier_filter(args, model, dataloader):
     """
     Filter out the generated_text if it cannot be supported or refuted by the evidence.
-    Handles duplicate idx automatically.
+    Removes duplicate idx automatically.
     """
     model.eval()
-    logit_dict = {}   
-    prob_dict = {} 
-    
+    logit_dict = {}   # lưu logits theo sample idx
+    prob_dict = {}    # lưu prob theo sample idx
+
     with torch.no_grad():
         for data in tqdm(dataloader, desc="Evaluate"):
             for k, v in data.items():
@@ -42,32 +42,29 @@ def classifier_filter(args, model, dataloader):
                     data[k] = v.to(args.device)
             
             idx_batch = data['idx']
+            if isinstance(idx_batch, torch.Tensor):
+                idx_batch = idx_batch.tolist()
             del data['idx']
-            
+
             outputs = model(**data)
             logits = outputs['logits']
             probs = torch.softmax(logits, dim=-1)
-            
+
             for idx, logit, prob in zip(idx_batch, logits, probs):
-                if idx in logit_dict:
-                    logit_dict[idx].append(logit.cpu())
-                    prob_dict[idx].append(prob.cpu())
-                else:
-                    logit_dict[idx] = [logit.cpu()]
-                    prob_dict[idx] = [prob.cpu()]
-    
-    final_idx_list = []
-    final_prob_list = []
-    for idx in sorted(logit_dict.keys()):
-        final_idx_list.append(idx)
-        final_prob_list.append(torch.mean(torch.stack(prob_dict[idx]), dim=0).tolist())
-    
+                if idx not in logit_dict:
+                    logit_dict[idx] = logit.cpu()
+                    prob_dict[idx] = prob.cpu()
+
+    final_idx_list = list(logit_dict.keys())
+    final_prob_list = [prob_dict[idx].tolist() for idx in final_idx_list]
+
     filtered_idx_list = []
     for idx, prob in zip(final_idx_list, final_prob_list):
         if prob[2] < args.cls_threshold and max(prob[0], prob[1]) > args.min_prob:
             filtered_idx_list.append(idx)
-    
+
     return filtered_idx_list
+
 
 
 def get_parameter():
