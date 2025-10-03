@@ -8,7 +8,7 @@ python ./checker/verifier/main.py  \
     --train_file $DATA_DIR/train.parquet \
     --dev_file $DATA_DIR/dev.parquet \
     --model_name "VietAI/vit5-base" \
-    --epochs 5 \
+    --epochs 3 \
     --batch_size 16 \
     --lr 2e-05 \
     --logging_steps 1 \
