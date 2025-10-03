@@ -44,8 +44,8 @@ def classifier_filter(args, model, dataloader):
                         data[k] = v.to(args.device)
             idx_list += data['idx']
             del data["idx"]
-            output = model(**data)
-            logits = output.logits
+            outputs = model(**data)
+            logits = output['logits']
             probs = torch.softmax(logits, dim=-1)
             prob_list += probs.tolist()
             logit_list += logits.tolist()
