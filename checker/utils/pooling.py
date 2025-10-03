@@ -4,39 +4,39 @@ import torch.nn.functional as F
 
 from transformers import T5EncoderModel
 
-class MeanMaxPooling(nn.Module):
-    def __init__(self, hidden_dim, out_dim=None):
+class MeanMaxAttentionPooling(nn.Module):
+    def __init__(self, hidden_dim, out_dim=None, attn_dropout=0.1):
         super().__init__()
         if out_dim is None:
             out_dim = hidden_dim
         self.attn = nn.Linear(hidden_dim, 1)
         self.proj = nn.Linear(3 * hidden_dim, out_dim)
+        self.attn_dropout = nn.Dropout(attn_dropout)
 
     def forward(self, hidden_states, mask=None):
         if mask is not None:
-            mask = mask.unsqueeze(-1)
-            hidden_states = hidden_states * mask
+            mask_unsq = mask.unsqueeze(-1)
+            hidden_states_masked = hidden_states * mask_unsq
 
-            sum_hidden = hidden_states.sum(dim=1)
-            lengths = mask.sum(dim=1).clamp(min=1)
+            sum_hidden = hidden_states_masked.sum(dim=1)
+            lengths = mask_unsq.sum(dim=1).clamp(min=1)
             mean_pooled = sum_hidden / lengths
         else:
             mean_pooled = hidden_states.mean(dim=1)
 
         if mask is not None:
-            hidden_states = hidden_states + (mask.eq(0) * -1e9)
-        max_pooled, _ = hidden_states.max(dim=1)
+            hidden_states_masked = hidden_states + (mask.unsqueeze(-1).eq(0) * -1e9)
+        max_pooled, _ = hidden_states_masked.max(dim=1)
 
-        # attention pooling
         scores = self.attn(hidden_states).squeeze(-1)
         if mask is not None:
-            scores = scores.masked_fill(mask.squeeze(-1) == 0, -1e9)
+            scores = scores.masked_fill(mask == 0, -1e9)
         attn_weights = F.softmax(scores, dim=-1)
+        attn_weights = self.attn_dropout(attn_weights)
         attn_pooled = torch.bmm(attn_weights.unsqueeze(1), hidden_states).squeeze(1)
 
         pooled = torch.cat([mean_pooled, max_pooled, attn_pooled], dim=-1)
         return self.proj(pooled)
-
 
 class MeanMaxPoolingModel(torch.nn.Module):
     def __init__(self, model_name, num_labels):
