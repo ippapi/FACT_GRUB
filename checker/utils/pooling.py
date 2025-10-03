@@ -4,7 +4,7 @@ import torch.nn.functional as F
 
 from transformers import T5EncoderModel
 
-class MeanMaxAttentionPooling(nn.Module):
+class MeanMaxPooling(nn.Module):
     def __init__(self, hidden_dim, out_dim=None, attn_dropout=0.1):
         super().__init__()
         if out_dim is None:
