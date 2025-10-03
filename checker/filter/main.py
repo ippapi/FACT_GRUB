@@ -45,7 +45,7 @@ def classifier_filter(args, model, dataloader):
             idx_list += data['idx']
             del data["idx"]
             outputs = model(**data)
-            logits = output['logits']
+            logits = outputs['logits']
             probs = torch.softmax(logits, dim=-1)
             prob_list += probs.tolist()
             logit_list += logits.tolist()
